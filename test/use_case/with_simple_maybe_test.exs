@@ -1,10 +1,10 @@
-defmodule UseCase.SimpleMaybeTest.Maybe do
+defmodule UseCase.WithSimpleMaybeTest.Maybe do
   import ExUnion
 
   defunion some(value) | none
 end
 
-defmodule UseCase.SimpleMaybeTest do
+defmodule UseCase.WithSimpleMaybeTest do
   use ExUnit.Case, async: true
 
   alias __MODULE__.Maybe
