@@ -8,11 +8,6 @@ defmodule ExUnion do
   defmacro defunion(ast) do
     definition = Definition.build(ast, env: __CALLER__)
 
-    definition
-    |> Definition.to_union()
-    |> Macro.to_string()
-    |> IO.puts()
-
     quote do
       @__union__ unquote(Macro.escape(definition))
 
