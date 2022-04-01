@@ -3,16 +3,20 @@ defmodule ExUnion do
   Documentation for `ExUnion`.
   """
 
-  @doc """
-  Hello world.
+  alias __MODULE__.Definition
 
-  ## Examples
+  defmacro defunion(ast) do
+    definition = Definition.from(ast, env: __CALLER__)
 
-      iex> ExUnion.hello()
-      :world
+    definition
+    |> Definition.to_union()
+    |> Macro.to_string()
+    |> IO.puts()
 
-  """
-  def hello do
-    :world
+    quote do
+      @__union__ unquote(Macro.escape(definition))
+
+      unquote(Definition.to_union(definition))
+    end
   end
 end
