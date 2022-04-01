@@ -42,6 +42,7 @@ defmodule ExUnion.Definition do
       [],
       List.flatten([
         to_structs(union),
+        to_type(union),
         to_shortcut_functions(union),
         to_guard(union)
       ])
@@ -53,13 +54,27 @@ defmodule ExUnion.Definition do
   defp to_shortcut_functions(%__MODULE__{types: types}),
     do: Enum.map(types, &Type.to_shortcut_function/1)
 
+  defp to_type(%__MODULE__{types: types}) do
+    union =
+      types
+      |> Enum.map(fn %Type{module: module} ->
+        quote do
+          unquote(module).t()
+        end
+      end)
+      |> Enum.reduce(&{:|, [], [&1, &2]})
+
+    quote do
+      @type t :: unquote(union)
+    end
+  end
+
   defp to_guard(%__MODULE__{name: name, types: types}) do
     guard_name = :"is_#{name}"
     value = Macro.var(:value, __MODULE__)
 
     guards =
       types
-      |> IO.inspect()
       |> Enum.map(fn %Type{module: module} ->
         quote do: is_struct(unquote(value), unquote(module))
       end)
