@@ -9,19 +9,19 @@ defmodule ExUnion.Definition.Type.Field do
         }
   defstruct [:name, :default, :type, :var]
 
-  def from({:"::", _meta, [variable, type]}) do
-    new(variable, type: type)
+  def build({:"::", _meta, [variable, type]}) do
+    do_build(variable, type: type)
   end
 
-  def from({:\\, _meta, [variable, type]}) do
-    new(variable, type: type)
+  def build({:\\, _meta, [variable, type]}) do
+    do_build(variable, type: type)
   end
 
-  def from(variable), do: new(variable)
+  def build(variable), do: do_build(variable)
 
   @base_default :none
   @base_type {:any, [], Elixir}
-  defp new({name, _, _}, extra \\ []) do
+  defp do_build({name, _, _}, extra \\ []) do
     %__MODULE__{
       name: name,
       default: Keyword.get(extra, :default, @base_default),

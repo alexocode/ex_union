@@ -10,11 +10,11 @@ defmodule ExUnion.Definition.Type do
         }
   defstruct [:name, :module, :fields]
 
-  def from(name, values, opts) do
+  def build(name, values, opts) do
     fields =
       values
       |> List.wrap()
-      |> Enum.map(&Field.from/1)
+      |> Enum.map(&Field.build/1)
 
     %__MODULE__{
       name: name,

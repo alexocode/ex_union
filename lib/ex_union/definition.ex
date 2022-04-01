@@ -10,11 +10,11 @@ defmodule ExUnion.Definition do
         }
   defstruct [:name, :module, :types]
 
-  def from(ast, opts) when not is_map(opts) do
-    from(ast, Map.new(opts))
+  def build(ast, opts) when not is_map(opts) do
+    build(ast, Map.new(opts))
   end
 
-  def from(ast, %{env: env} = opts) do
+  def build(ast, %{env: env} = opts) do
     name =
       env.module
       |> Module.split()
@@ -33,7 +33,7 @@ defmodule ExUnion.Definition do
   end
 
   defp extract_types({name, _meta, values}, opts) do
-    [Type.from(name, values, opts)]
+    [Type.build(name, values, opts)]
   end
 
   def to_union(%__MODULE__{} = union) do

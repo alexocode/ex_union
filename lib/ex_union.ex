@@ -6,7 +6,7 @@ defmodule ExUnion do
   alias __MODULE__.Definition
 
   defmacro defunion(ast) do
-    definition = Definition.from(ast, env: __CALLER__)
+    definition = Definition.build(ast, env: __CALLER__)
 
     definition
     |> Definition.to_union()
