@@ -41,20 +41,20 @@ defmodule ExUnion.Definition do
       :__block__,
       [],
       List.flatten([
-        to_structs(union),
-        to_type(union),
-        to_shortcut_functions(union),
-        to_guard(union)
+        ast_for_structs(union),
+        ast_for_type(union),
+        ast_for_shortcut_functions(union),
+        ast_for_guard(union)
       ])
     }
   end
 
-  defp to_structs(%__MODULE__{types: types}), do: Enum.map(types, &Type.to_struct/1)
+  defp ast_for_structs(%__MODULE__{types: types}), do: Enum.map(types, &Type.to_struct/1)
 
-  defp to_shortcut_functions(%__MODULE__{types: types}),
+  defp ast_for_shortcut_functions(%__MODULE__{types: types}),
     do: Enum.map(types, &Type.to_shortcut_function/1)
 
-  defp to_type(%__MODULE__{types: types}) do
+  defp ast_for_type(%__MODULE__{types: types}) do
     union =
       types
       |> Enum.map(fn %Type{module: module} ->
@@ -69,7 +69,7 @@ defmodule ExUnion.Definition do
     end
   end
 
-  defp to_guard(%__MODULE__{name: name, types: types}) do
+  defp ast_for_guard(%__MODULE__{name: name, types: types}) do
     guard_name = :"is_#{name}"
     value = Macro.var(:value, __MODULE__)
 
