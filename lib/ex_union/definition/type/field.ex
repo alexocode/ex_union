@@ -9,23 +9,50 @@ defmodule ExUnion.Definition.Type.Field do
         }
   defstruct [:name, :default, :type, :var]
 
-  def build({:"::", _meta, [variable, type]}) do
-    do_build(variable, type: type)
+  def build({:"::", _meta, [variable, type]}, %{env: env}) do
+    type = dealias_type(type, env)
+
+    do_build(variable, type)
   end
 
-  def build({:\\, _meta, [variable, type]}) do
-    do_build(variable, type: type)
+  def build(variable, _opts), do: do_build(variable)
+
+  defp dealias_type({{:., meta1, [module, function]}, meta2, arguments}, env) do
+    full_module = dealias_type(module, env)
+
+    {{:., meta1, [full_module, function]}, meta2, arguments}
   end
 
-  def build(variable), do: do_build(variable)
+  defp dealias_type({:__aliases__, meta, [{:__MODULE__, _, _} | nested]}, env) do
+    build_alias(env.module, nested, meta)
+  end
 
-  @base_default :none
-  @base_type {:any, [], Elixir}
-  defp do_build({name, _, _}, extra \\ []) do
+  defp dealias_type({:__aliases__, meta, [maybe_alias | nested]} = module_ast, env) do
+    case Keyword.fetch(env.aliases, :"Elixir.#{maybe_alias}") do
+      {:ok, full_module} ->
+        build_alias(full_module, nested, meta)
+
+      :error ->
+        module_ast
+    end
+  end
+
+  defp dealias_type(type, _env), do: type
+
+  defp build_alias(module, nested, meta) do
+    module_parts =
+      module
+      |> Module.split()
+      |> Enum.map(&String.to_atom/1)
+
+    {:__aliases__, meta, module_parts ++ nested}
+  end
+
+  @default_type {:any, [], Elixir}
+  defp do_build({name, _, _}, type \\ @default_type) do
     %__MODULE__{
       name: name,
-      default: Keyword.get(extra, :default, @base_default),
-      type: Keyword.get(extra, :type, @base_type),
+      type: type,
       var: Macro.var(name, __MODULE__)
     }
   end

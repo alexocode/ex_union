@@ -1,37 +1,49 @@
-defmodule UseCase.WithRemoteTypesTest.MyUnion do
-  import ExUnion
-
-  defmodule MyStruct do
-    @type t :: %__MODULE__{}
-    defstruct []
-  end
-
-  defunion thing(my_struct :: MyStruct.t())
-end
-
 defmodule UseCase.WithRemoteTypesTest do
   use ExUnit.Case, async: true
 
-  alias __MODULE__.MyUnion
+  test "properly compiles an union with a remote typed union" do
+    defmodule RemoteTypeUnion1 do
+      import ExUnion
 
-  require MyUnion
-
-  test "generates struct definitions for MyUnion.Thing" do
-    assert %MyUnion.Thing{}
-  end
-
-  test "generates MyUnion.thing/1 construction shortcuts" do
-    assert MyUnion.thing(%MyUnion.MyStruct{}) == %MyUnion.Thing{my_struct: %MyUnion.MyStruct{}}
-  end
-
-  test "generates MyUnion.is_my_union/1 guard which checks if value is part of the union" do
-    checker = fn
-      value when MyUnion.is_my_union(value) -> :ok
-      _ -> :error
+      defunion option(value :: String.t())
     end
+  end
 
-    assert checker.(:some_value) == :error
-    assert checker.("another value") == :error
-    assert checker.(MyUnion.thing(%MyUnion.MyStruct{})) == :ok
+  test "properly compiles an union with a remote typed union using an alias" do
+    defmodule RemoteTypeUnion2 do
+      import ExUnion
+
+      defmodule Typed do
+        @type t :: :whatever
+      end
+
+      defunion option(value :: Typed.t())
+    end
+  end
+
+  test "properly compiles an union with a remote typed union using a nested alias" do
+    defmodule RemoteTypeUnion3 do
+      import ExUnion
+
+      defmodule Typed do
+        defmodule Nested do
+          @type t :: :whatever
+        end
+      end
+
+      defunion option(value :: Typed.Nested.t())
+    end
+  end
+
+  test "properly compiles an union with a remote typed union using the __MODULE__ prefix" do
+    defmodule RemoteTypeUnion4 do
+      import ExUnion
+
+      defmodule Typed do
+        @type t :: :whatever
+      end
+
+      defunion option(value :: __MODULE__.Typed.t())
+    end
   end
 end
