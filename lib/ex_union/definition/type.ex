@@ -59,8 +59,35 @@ defmodule ExUnion.Definition.Type do
   end
 
   defp ast_for_new_function(%__MODULE__{} = type) do
-    arguments = ast_for_arguments(type)
-    arguments_mapped_to_struct_fields = Enum.map(type.fields, &{&1.name, &1.var})
+    quote do
+      unquote(ast_for_matching_new_function(type))
+      unquote(ast_for_simple_new_function(type))
+    end
+  end
+
+  defp ast_for_matching_new_function(%__MODULE__{fields: fields}) do
+    {
+      :__block__,
+      [],
+      for field <- fields do
+        tuple = {field.name, field.var}
+
+        quote do
+          def new([unquote(tuple)]) do
+            %__MODULE__{unquote_splicing([tuple])}
+          end
+
+          def new([unquote(tuple) | rest]) do
+            %__MODULE__{new(rest) | unquote(tuple)}
+          end
+        end
+      end
+    }
+  end
+
+  defp ast_for_simple_new_function(%__MODULE__{fields: fields}) do
+    arguments = Enum.map(fields, & &1.var)
+    arguments_mapped_to_struct_fields = Enum.map(fields, &{&1.name, &1.var})
 
     quote do
       def new(unquote_splicing(arguments)) do
@@ -69,17 +96,30 @@ defmodule ExUnion.Definition.Type do
     end
   end
 
-  defp ast_for_arguments(%__MODULE__{fields: fields}) do
-    Enum.map(fields, & &1.var)
-  end
-
   def to_shortcut_function(%__MODULE__{} = type) do
-    arguments = ast_for_arguments(type)
+    arguments = Enum.map(type.fields, & &1.var)
 
-    quote do
-      defdelegate unquote(type.name)(unquote_splicing(arguments)),
-        to: unquote(type.module),
-        as: :new
+    arity_1_shortcut =
+      quote do
+        defdelegate unquote(type.name)(fields),
+          to: unquote(type.module),
+          as: :new
+      end
+
+    arity_n_shortcut =
+      quote do
+        defdelegate unquote(type.name)(unquote_splicing(arguments)),
+          to: unquote(type.module),
+          as: :new
+      end
+
+    if length(arguments) > 1 do
+      quote do
+        unquote(arity_1_shortcut)
+        unquote(arity_n_shortcut)
+      end
+    else
+      arity_n_shortcut
     end
   end
 end

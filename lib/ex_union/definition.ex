@@ -15,17 +15,18 @@ defmodule ExUnion.Definition do
   end
 
   def build(ast, %{env: env} = opts) do
-    name =
-      env.module
-      |> Module.split()
-      |> List.last()
-      |> Macro.underscore()
-
     %__MODULE__{
-      name: name,
+      name: determine_name(env.module),
       module: env.module,
       types: extract_types(ast, opts)
     }
+  end
+
+  defp determine_name(module) do
+    module
+    |> Module.split()
+    |> List.last()
+    |> Macro.underscore()
   end
 
   defp extract_types({:|, _meta, types}, opts) do
@@ -49,10 +50,13 @@ defmodule ExUnion.Definition do
     }
   end
 
-  defp ast_for_structs(%__MODULE__{types: types}), do: Enum.map(types, &Type.to_struct/1)
+  defp ast_for_structs(%__MODULE__{types: types}) do
+    Enum.map(types, &Type.to_struct/1)
+  end
 
-  defp ast_for_shortcut_functions(%__MODULE__{types: types}),
-    do: Enum.map(types, &Type.to_shortcut_function/1)
+  defp ast_for_shortcut_functions(%__MODULE__{types: types}) do
+    Enum.map(types, &Type.to_shortcut_function/1)
+  end
 
   defp ast_for_type(%__MODULE__{types: types}) do
     union =
