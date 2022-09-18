@@ -2,6 +2,7 @@ defmodule ExUnion.Definition.Type do
   @moduledoc false
 
   alias __MODULE__.Field
+  alias ExUnion.Definition.Block
 
   @type t :: %__MODULE__{
           name: atom,
@@ -65,24 +66,50 @@ defmodule ExUnion.Definition.Type do
     end
   end
 
+  defp ast_for_matching_new_function(%__MODULE__{fields: []}) do
+    nil
+  end
+
   defp ast_for_matching_new_function(%__MODULE__{fields: fields}) do
-    {
-      :__block__,
-      [],
+    field_names = Enum.map(fields, & &1.name)
+
+    ast_for_delegating_new =
+      quote do
+        def new([{field, _} | _] = fields) when field in unquote(field_names) do
+          new_from_fields(fields)
+        end
+      end
+
+    ast_for_new_from_fields =
       for field <- fields do
         tuple = {field.name, field.var}
 
         quote do
-          def new([unquote(tuple)]) do
-            %__MODULE__{unquote_splicing([tuple])}
-          end
-
-          def new([unquote(tuple) | rest]) do
-            %__MODULE__{new(rest) | unquote(tuple)}
+          defp new_from_fields([unquote(tuple) | rest]) do
+            %__MODULE__{new_from_fields(rest) | unquote(tuple)}
           end
         end
       end
-    }
+
+    ast_for_new_from_fields_fallback =
+      quote do
+        defp new_from_fields([]) do
+          %__MODULE__{}
+        end
+
+        defp new_from_fields(other) do
+          names = unquote(Enum.join(field_names, "/"))
+
+          raise ArgumentError,
+                "expected a keyword pair for #{names} but received: " <> inspect(other)
+        end
+      end
+
+    Block.from([
+      ast_for_delegating_new,
+      ast_for_new_from_fields,
+      ast_for_new_from_fields_fallback
+    ])
   end
 
   defp ast_for_simple_new_function(%__MODULE__{fields: fields}) do
