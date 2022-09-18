@@ -72,16 +72,13 @@ defmodule ExUnion.Definition do
   defp ast_for_guard(%__MODULE__{name: name, types: types}) do
     guard_name = :"is_#{name}"
     value = Macro.var(:value, __MODULE__)
-
-    guards =
-      types
-      |> Enum.map(fn %Type{module: module} ->
-        quote do: is_struct(unquote(value), unquote(module))
-      end)
-      |> Enum.reduce(&{:or, [], [&1, &2]})
+    modules = Enum.map(types, & &1.module)
 
     quote do
-      defguard unquote(guard_name)(unquote(value)) when unquote(guards)
+      defguard unquote(guard_name)(unquote(value))
+               when is_map(unquote(value)) and
+                      :erlang.is_map_key(:__struct__, unquote(value)) and
+                      :erlang.map_get(:__struct__, unquote(value)) in unquote(modules)
     end
   end
 end

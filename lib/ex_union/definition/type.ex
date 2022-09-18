@@ -76,7 +76,7 @@ defmodule ExUnion.Definition.Type do
     ast_for_has_fields_guard =
       fields
       |> Enum.map(fn %Field{name: name} ->
-        quote do: is_map_key(fields, unquote(name))
+        quote do: :erlang.is_map_key(unquote(name), fields)
       end)
       |> Enum.reduce(&{:or, [], [&1, &2]})
 
