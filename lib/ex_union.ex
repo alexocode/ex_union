@@ -1,7 +1,8 @@
 defmodule ExUnion do
-  @moduledoc """
-  Documentation for `ExUnion`.
-  """
+  readme = "README.md"
+
+  @external_resource readme
+  @moduledoc ExUnion.Docs.massage_readme(readme, for: "ExUnion")
 
   alias __MODULE__.Definition
 
