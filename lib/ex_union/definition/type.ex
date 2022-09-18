@@ -73,14 +73,27 @@ defmodule ExUnion.Definition.Type do
   defp ast_for_matching_new_function(%__MODULE__{fields: fields}) do
     field_names = Enum.map(fields, & &1.name)
 
+    ast_for_has_fields_guard =
+      fields
+      |> Enum.map(fn %Field{name: name} ->
+        quote do: is_map_key(fields, unquote(name))
+      end)
+      |> Enum.reduce(&{:or, [], [&1, &2]})
+
     ast_for_delegating_new =
       quote do
+        def new(fields) when is_map(fields) and unquote(ast_for_has_fields_guard) do
+          fields
+          |> Map.to_list()
+          |> new_from_fields()
+        end
+
         def new([{field, _} | _] = fields) when field in unquote(field_names) do
           new_from_fields(fields)
         end
       end
 
-    ast_for_new_from_fields =
+    ast_for_new_from_keywords =
       for field <- fields do
         tuple = {field.name, field.var}
 
@@ -91,7 +104,7 @@ defmodule ExUnion.Definition.Type do
         end
       end
 
-    ast_for_new_from_fields_fallback =
+    ast_for_new_from_keywords_fallback =
       quote do
         defp new_from_fields([]) do
           %__MODULE__{}
@@ -107,8 +120,8 @@ defmodule ExUnion.Definition.Type do
 
     Block.from([
       ast_for_delegating_new,
-      ast_for_new_from_fields,
-      ast_for_new_from_fields_fallback
+      ast_for_new_from_keywords,
+      ast_for_new_from_keywords_fallback
     ])
   end
 
