@@ -1,7 +1,7 @@
 defmodule ExUnion.Definition do
   @moduledoc false
 
-  alias __MODULE__.Type
+  alias __MODULE__.{Block, Type}
 
   @type t :: %__MODULE__{
           name: atom,
@@ -38,16 +38,12 @@ defmodule ExUnion.Definition do
   end
 
   def to_union(%__MODULE__{} = union) do
-    {
-      :__block__,
-      [],
-      List.flatten([
-        ast_for_structs(union),
-        ast_for_type(union),
-        ast_for_shortcut_functions(union),
-        ast_for_guard(union)
-      ])
-    }
+    Block.from([
+      ast_for_structs(union),
+      ast_for_type(union),
+      ast_for_shortcut_functions(union),
+      ast_for_guard(union)
+    ])
   end
 
   defp ast_for_structs(%__MODULE__{types: types}) do
