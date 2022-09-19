@@ -74,12 +74,12 @@ jobs:
   coverage:
     name: Collect Test Coverage
     runs-on: ubuntu-latest
-    container: hexpm/elixir:1.11.2-erlang-22.3.4.3-alpine-3.11.6
+    container: hexpm/elixir:1.14.0-erlang-24.3.4.5-alpine-3.16.2
     env:
       MIX_ENV: test
-      VERSION_ALPINE: 3.11.6
-      VERSION_ELIXIR: 1.11.2
-      VERSION_OTP: 22.3.4.3
+      VERSION_ALPINE: 3.16.2
+      VERSION_ELIXIR: 1.14.0
+      VERSION_OTP: 24.3.4.5
     steps:
       - name: Install git (required for mix coveralls.github)
         run: apk add --no-cache git
