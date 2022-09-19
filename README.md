@@ -34,6 +34,70 @@ Documentation gets generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 
 **TODO: Write documentation**
 
+```elixir
+defmodule Maybe do
+  import ExUnion
+
+  defunion some(value) | none
+end
+```
+
+compiles to
+
+```
+defmodule Maybe do
+  @type t :: Maybe.None.t() | Maybe.Some.t()
+
+  defmodule Maybe.Some do
+    @type t :: %__MODULE__{value: any}
+    defstruct [:value]
+
+    def new(fields) when is_map(fields) and :erlang.is_map_key(:value, fields) do
+      fields |> Map.to_list() |> new_from_fields()
+    end
+
+    def new([{field, _} | _] = fields) when field in [:value] do
+      new_from_fields(fields)
+    end
+
+    def new(value) do
+      %__MODULE__{value: value}
+    end
+
+    defp new_from_fields([{:value, value} | rest]) do
+      %__MODULE__{new_from_fields(rest) | value: value}
+    end
+
+    defp new_from_fields([]) do
+      %__MODULE__{}
+    end
+
+    defp new_from_fields(other) do
+      names = "value"
+
+      raise ArgumentError,
+            "expected a keyword pair for #{names} but received: " <> inspect(other)
+    end
+  end
+
+  defmodule Maybe.None do
+    @type t :: %__MODULE__{}
+    defstruct []
+
+    def new() do
+      %__MODULE__{}
+    end
+  end
+
+  defdelegate some(value), to: Maybe.Some, as: :new
+  defdelegate none(), to: Maybe.None, as: :new
+
+  defguard is_maybe(value)
+           when is_map(value) and :erlang.is_map_key(:__struct__, value) and
+                  :erlang.map_get(:__struct__, value) in [Maybe.Some, Maybe.None]
+end
+```
+
 ## Roadmap
 
 - [ ] Figure out a way to derive protocol implementations for union structs (e.g. for `Jason`)
