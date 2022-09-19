@@ -16,7 +16,7 @@
 
 ## Installation
 
-Add [`sieb`][hex] to your list of dependencies in `mix.exs`:
+Add [`ex_union`][hex] to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
