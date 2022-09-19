@@ -14,6 +14,7 @@ defmodule ExUnion.MixProject do
         "coveralls.post": :test,
         "coveralls.html": :test
       ],
+      test_coverage: [tool: ExCoveralls],
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
