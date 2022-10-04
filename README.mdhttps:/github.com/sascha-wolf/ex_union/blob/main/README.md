@@ -44,7 +44,7 @@ end
 
 compiles to
 
-```
+```elixir
 defmodule Maybe do
   @type t :: Maybe.None.t() | Maybe.Some.t()
 
