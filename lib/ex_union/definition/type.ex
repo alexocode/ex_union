@@ -80,49 +80,15 @@ defmodule ExUnion.Definition.Type do
       end)
       |> Enum.reduce(&{:or, [], [&1, &2]})
 
-    ast_for_delegating_new =
-      quote do
-        def new(fields) when is_map(fields) and unquote(ast_for_has_fields_guard) do
-          fields
-          |> Map.to_list()
-          |> new_from_fields()
-        end
-
-        def new([{field, _} | _] = fields) when field in unquote(field_names) do
-          new_from_fields(fields)
-        end
+    quote do
+      def new(fields) when is_map(fields) and unquote(ast_for_has_fields_guard) do
+        struct!(__MODULE__, fields)
       end
 
-    ast_for_new_from_keywords =
-      for field <- fields do
-        tuple = {field.name, field.var}
-
-        quote do
-          defp new_from_fields([unquote(tuple) | rest]) do
-            %__MODULE__{new_from_fields(rest) | unquote(tuple)}
-          end
-        end
+      def new([{field, _} | _] = fields) when field in unquote(field_names) do
+        struct!(__MODULE__, fields)
       end
-
-    ast_for_new_from_keywords_fallback =
-      quote do
-        defp new_from_fields([]) do
-          %__MODULE__{}
-        end
-
-        defp new_from_fields(other) do
-          names = unquote(Enum.join(field_names, "/"))
-
-          raise ArgumentError,
-                "expected a keyword pair for #{names} but received: " <> inspect(other)
-        end
-      end
-
-    Block.from([
-      ast_for_delegating_new,
-      ast_for_new_from_keywords,
-      ast_for_new_from_keywords_fallback
-    ])
+    end
   end
 
   defp ast_for_simple_new_function(%__MODULE__{fields: fields}) do

@@ -48,16 +48,14 @@ defmodule UseCase.WithMultipleFields do
   end
 
   test "raises a descriptive error when passing an invalid field name" do
-    assert_raise ArgumentError,
-                 "expected a keyword pair for field1/field2 but received: [fild2: \"this has a typo\"]",
+    assert_raise KeyError,
                  fn ->
                    MyUnion.two(field1: "whatever", fild2: "this has a typo")
                  end
   end
 
   test "raises a descriptive error when passing an invalid field name through a map" do
-    assert_raise ArgumentError,
-                 "expected a keyword pair for field1/field2 but received: [fild2: \"this has a typo\"]",
+    assert_raise KeyError,
                  fn ->
                    MyUnion.two(%{field1: "whatever", fild2: "this has a typo"})
                  end
