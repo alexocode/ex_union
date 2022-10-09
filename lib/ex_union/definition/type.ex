@@ -2,7 +2,6 @@ defmodule ExUnion.Definition.Type do
   @moduledoc false
 
   alias __MODULE__.Field
-  alias ExUnion.Definition.Block
 
   @type t :: %__MODULE__{
           name: atom,

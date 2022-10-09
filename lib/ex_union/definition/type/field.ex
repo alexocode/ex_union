@@ -10,12 +10,32 @@ defmodule ExUnion.Definition.Type.Field do
   defstruct [:name, :default, :type, :var]
 
   def build({:"::", _meta, [variable, type]}, %{env: env}) do
-    type = dealias_type(type, env)
+    type = massage_type(type, env)
 
     do_build(variable, type)
   end
 
   def build(variable, _opts), do: do_build(variable)
+
+  defp massage_type(type, env) do
+    case type do
+      {:t, _, _} ->
+        prefix_t(type, env)
+
+      {{:., _, _}, _, _} ->
+        dealias_type(type, env)
+
+      {:__aliases__, _, _} ->
+        dealias_type(type, env)
+
+      other ->
+        other
+    end
+  end
+
+  defp prefix_t({:t, meta, _} = t, env) do
+    {{:., meta, [env.module, t]}, meta, []}
+  end
 
   defp dealias_type({{:., meta1, [module, function]}, meta2, arguments}, env) do
     full_module = dealias_type(module, env)
@@ -36,8 +56,6 @@ defmodule ExUnion.Definition.Type.Field do
         module_ast
     end
   end
-
-  defp dealias_type(type, _env), do: type
 
   defp build_alias(module, nested, meta) do
     module_parts =
