@@ -11,8 +11,13 @@
 
 - [Overview](#overview)
 - [Installation](#installation)
+- [Motivation](#motivation)
 - [Usage](#usage)
+  - [Multiple Fields](#multiple-fields)
+  - [Adding Type Specifications](#adding-type-specifications)
+- [Comparison](#comparison)
 - [Roadmap](#roadmap)
+- [Contributing](#contributing)
 
 ## Installation
 
@@ -30,9 +35,18 @@ Differences between the versions are explained in [the Changelog](./CHANGELOG.md
 
 Documentation gets generated with [ExDoc](https://github.com/elixir-lang/ex_doc) and can be viewed at [HexDocs][hexdocs].
 
+## Motivation
+
+`ExUnion` is meant to be a lightweight, elixir-y implementation of [tagged unions](https://en.wikipedia.org/wiki/Tagged_union) (also called variant, discriminated union, sum type, etc.).
+
+While conventionally Elixir tends to promote using tuples to model tagged unions - the `{:ok, ...} | {:error, ...}` pattern being a good example of that - this approach arguably lacks expressiveness, especially when modeling non-trivial unions.
+An alternative is to employ structs to model the individual cases of a tagged union, which works nicely but has the disadvantage of requiring significant boilerplate code.
+
+`ExUnion` attempts to bridge this gap by generating the necessary boilerplate (and a bit more) through a concise albeit opinionated DSL.
+
 ## Usage
 
-**TODO: Write documentation**
+To get an idea on how you can use `ExUnion` let's look at an example:
 
 ```elixir
 defmodule Maybe do
@@ -42,7 +56,73 @@ defmodule Maybe do
 end
 ```
 
-compiles to
+The `defunion` macro takes a type-spec similar definition and generates a bunch of code from it.
+Let's see how we can use `Maybe` now, shall we?
+
+```elixir
+iex> Maybe.none()
+%Maybe.None{}
+
+iex> Maybe.some("string!")
+%Maybe.Some{value: "string!"}
+
+# Requiring is necessary since `is_maybe` is a guard (defguard)
+iex> require Maybe
+iex> Maybe.is_maybe("What's the meaning of life, the universe, and everything?")
+false
+iex> Maybe.is_maybe(42)
+false
+iex> Maybe.is_maybe(Maybe.none())
+true
+```
+
+As you can see `ExUnion` generates a number of things from the definition:
+
+- a struct for each case of the union
+- a shortcut function for each case to create said struct
+- a guard that returns `true` if the given value is part of the union
+
+Check out the additional examples below to get a better impression of what `ExUnion` offers.
+
+### Multiple Fields
+
+```elixir
+defmodule Shape do
+  import ExUnion
+
+  defunion circle(radius)
+           | square(side)
+           | rectangle(width, height)
+end
+
+iex> Shape.circle(3)
+%Shape.Circle{radius: 3}
+
+iex> Shape.square(side: 4)
+%Shape.Square{side: 4}
+
+iex> Shape.rectangle(4, 2)
+%Shape.Rectangle{width: 4, height: 2}
+
+iex> Shape.rectangle(height: 2, width: 4)
+%Shape.Rectangle{width: 4, height: 2}
+```
+
+### Adding Type Specifications
+
+```elixir
+defmodule Color do
+  import ExUnion
+
+  defunion hex(string :: String.t)
+           | rgb(red :: 0..255, green :: 0..255, blue :: 0..255)
+           | rgba(red :: 0..255, green :: 0..255, blue :: 0..255, alpha :: float)
+           | hsl(hue :: 0..360, saturation :: float, lightness :: float)
+           | hsla(hue :: 0..360, saturation :: float, lightness :: float, alpha :: float)
+end
+```
+
+If you're interested you can checkout the fully written code of
 
 ```elixir
 defmodule Maybe do
@@ -53,30 +133,15 @@ defmodule Maybe do
     defstruct [:value]
 
     def new(fields) when is_map(fields) and :erlang.is_map_key(:value, fields) do
-      fields |> Map.to_list() |> new_from_fields()
+      struct!(__MODULE__, fields)
     end
 
     def new([{field, _} | _] = fields) when field in [:value] do
-      new_from_fields(fields)
+      struct!(__MODULE__, fields)
     end
 
     def new(value) do
       %__MODULE__{value: value}
-    end
-
-    defp new_from_fields([{:value, value} | rest]) do
-      %__MODULE__{new_from_fields(rest) | value: value}
-    end
-
-    defp new_from_fields([]) do
-      %__MODULE__{}
-    end
-
-    defp new_from_fields(other) do
-      names = "value"
-
-      raise ArgumentError,
-            "expected a keyword pair for #{names} but received: " <> inspect(other)
     end
   end
 
@@ -98,9 +163,19 @@ defmodule Maybe do
 end
 ```
 
+## Comparison
+
+`ExUnion` can be compared to a number of other libraries ...
+
+- [`Witchcraft`](https://github.com/witchcrafters/witchcraft)
+
 ## Roadmap
 
 - [ ] Figure out a way to derive protocol implementations for union structs (e.g. for `Jason`)
+
+## Contributing
+
+Contributions are always welcome but please read [our contribution guidelines](./CONTRIBUTING.md) before doing so.
 
 [hex]: https://hex.pm/packages/ex_union
 [hexdocs]: https://hexdocs.pm/ex_union
