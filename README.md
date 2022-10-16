@@ -13,8 +13,10 @@
 - [Installation](#installation)
 - [Motivation](#motivation)
 - [Usage](#usage)
-  - [Multiple Fields](#multiple-fields)
-  - [Adding Type Specifications](#adding-type-specifications)
+  - [Example: Multiple Fields](#example-multiple-fields)
+  - [Example: Adding Type Specifications](#example-adding-type-specifications)
+  - [Example: Adding Recursive Type Specifications](#example-adding-recursive-type-specifications)
+  - [Example: If you'd write all this by hand](#example-if-youd-write-all-this-by-hand)
 - [Comparison](#comparison)
 - [Roadmap](#roadmap)
 - [Contributing](#contributing)
@@ -78,13 +80,14 @@ true
 
 As you can see `ExUnion` generates a number of things from the definition:
 
-- a struct for each case of the union
+- a struct for each case of the union (including type specs)
 - a shortcut function for each case to create said struct
+- a shortcut type spec for each case and the general union (`t`, `union`, `union_<case>`)
 - a guard that returns `true` if the given value is part of the union
 
 Check out the additional examples below to get a better impression of what `ExUnion` offers.
 
-### Multiple Fields
+### Example: Multiple Fields
 
 ```elixir
 defmodule Shape do
@@ -108,7 +111,7 @@ iex> Shape.rectangle(height: 2, width: 4)
 %Shape.Rectangle{width: 4, height: 2}
 ```
 
-### Adding Type Specifications
+### Example: Adding Type Specifications
 
 ```elixir
 defmodule Color do
@@ -122,13 +125,45 @@ defmodule Color do
 end
 ```
 
-If you're interested you can checkout the fully written code of
+### Example: Adding Recursive Type Specifications
+
+```elixir
+defmodule IntegerTree do
+  import ExUnion
+
+  # You can also use `t` instead of `union` if you prefer
+  defunion leaf | node(integer :: integer, left :: union, right :: union)
+end
+```
+
+If necessary you can ever refer to individual cases of the union.
+Let's revisit the `Color` example for above and how we can use recursive types to reuse the `rbg` and `hsl` definitions:
+
+```elixir
+defmodule Color do
+  import ExUnion
+
+  defunion hex(string :: String.t)
+           | rgb(red :: 0..255, green :: 0..255, blue :: 0..255)
+           | rgba(rgb :: union_rgb, alpha :: float)
+           | hsl(hue :: 0..360, saturation :: float, lightness :: float)
+           | hsla(hsl :: union_hsl, alpha :: float)
+end
+```
+
+### Example: If you'd write all this by hand
+
+To give you more of an idea on the kind of code `ExUnion` generates for you, let's look at what you'd have to write out to get something equivalent.
+For this we'll use the `Maybe` example from earlier again.
 
 ```elixir
 defmodule Maybe do
-  @type t :: Maybe.None.t() | Maybe.Some.t()
+  @type t :: union
+  @type union :: Maybe.None.t() | Maybe.Some.t()
+  @type union_some :: Maybe.Some.t()
+  @type union_none :: Maybe.None.t()
 
-  defmodule Maybe.Some do
+  defmodule Some do
     @type t :: %__MODULE__{value: any}
     defstruct [:value]
 
@@ -145,7 +180,7 @@ defmodule Maybe do
     end
   end
 
-  defmodule Maybe.None do
+  defmodule None do
     @type t :: %__MODULE__{}
     defstruct []
 
@@ -159,7 +194,7 @@ defmodule Maybe do
 
   defguard is_maybe(value)
            when is_map(value) and :erlang.is_map_key(:__struct__, value) and
-                  :erlang.map_get(:__struct__, value) in [Maybe.Some, Maybe.None]
+                  :erlang.map_get(:__struct__, value) in [Some, None]
 end
 ```
 
