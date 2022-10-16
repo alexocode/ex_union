@@ -18,6 +18,8 @@
   - [Example: Adding Recursive Type Specifications](#example-adding-recursive-type-specifications)
   - [Example: If you'd write all this by hand](#example-if-youd-write-all-this-by-hand)
 - [Comparison](#comparison)
+  - [`Algae`](#algae)
+  - [`Ok`](#ok-or-wormholeelixirwormhole)
 - [Roadmap](#roadmap)
 - [Contributing](#contributing)
 
@@ -207,9 +209,35 @@ And while the specifics of the generated code are opinionated in places, they do
 
 ## Comparison
 
-`ExUnion` can be compared to a number of other libraries ...
+`ExUnion` can be compared to a number of other libraries.
 
-- [`Witchcraft`](https://github.com/witchcrafters/witchcraft)
+### [`Algae`][elixir:algae]
+
+[`Algae`][elixir:algae] offers for "algebraic data types for Elixir".
+
+Some people might prefer that, and that's perfectly fine!
+I think [`Algae`][elixir:algae] (and it's big brother [`Witchcraft`][elixir:witchcraft]) are amazing projects and should be used more - but I also think that they come with a lot of inborn complexity.
+
+Not everybody is familiar with "algebraic data types" and arguably not everybody needs to be!
+But on the other hand there's a lot of goodness in the tools they bring to the table.
+
+[`Algea`][elixir:algae] also offers its own flavor of tagged unions (or rather sum types) but also with more than that.
+`ExUnion` by design __only__ implements tagged unions and nothing more - as they are a tool most developers probably are familiar with - in an attempt to be as approachable and self-explanatory as possible.
+
+At some point you and/or your team might decide to take the next step and use [`Algae`][elixir:algae] or even [`Witchcraft`][elixir:witchcraft] and `ExUnion` will be happy to have been part of your journey.
+Or maybe `ExUnion` is all you need and that would be fine too.
+
+### [`Ok`][elixir:ok] or [`Wormhole`][elixir:wormhole]
+
+[`Ok`][elixir:ok] and [`Wormhole`][elixir:wormhole] both aim to provide additional tools to work with Elixir's most well-known tagged union: `{:ok, value}` and `{:error, reason}`.
+But they do only that.
+
+If you want more tools to deal with `{:ok, value}` and `{:error, reason}` tuples, then they are great libraries.
+But if you want additional tools to model similar tagged unions, then these libraries don't help you.
+
+`ExUnion` doesn't pretend to help you with `{:ok, value}` / `{:error, reason}`.
+This isn't the motivation behind the project.
+It does however give you more power to escape the limits of using tagged tuples to model unions.
 
 ## Roadmap
 
@@ -219,5 +247,9 @@ And while the specifics of the generated code are opinionated in places, they do
 
 Contributions are always welcome but please read [our contribution guidelines](./CONTRIBUTING.md) before doing so.
 
+[elixir:algae]: https://github.com/witchcrafters/algae
+[elixir:ok]: https://github.com/CrowdHailer/OK
+[elixir:witchcraft]: https://github.com/witchcrafters/witchcraft
+[elixir:wormhole]: https://github.com/renderedtext/wormhole
 [hex]: https://hex.pm/packages/ex_union
 [hexdocs]: https://hexdocs.pm/ex_union
