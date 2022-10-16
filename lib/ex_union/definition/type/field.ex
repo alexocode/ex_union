@@ -17,25 +17,25 @@ defmodule ExUnion.Definition.Type.Field do
 
   def build(variable, _opts), do: do_build(variable)
 
-  defp massage_type(type, env) do
-    Macro.postwalk(type, &do_massage_type(&1, env))
+  defp massage_type(ast, env) do
+    Macro.postwalk(ast, fn
+      {name, _, _} = type ->
+        cond do
+          name == :__aliases__ or match?({:., _, _}, name) ->
+            dealias_type(type, env)
+
+          name in [:t, :union] or starts_with?(name, "union_") ->
+            namespace_type(type, env.module)
+
+          # Fallback
+          true ->
+            type
+        end
+
+      other ->
+        other
+    end)
   end
-
-  defp do_massage_type({ast, _, _} = type, env) do
-    cond do
-      ast in [:t, :union] or starts_with?(ast, "union_") ->
-        namespace_type(type, env.module)
-
-      ast == :__aliases__ or match?({:., _, _}, ast) ->
-        dealias_type(type, env)
-
-      # Fallback
-      true ->
-        type
-    end
-  end
-
-  defp do_massage_type(type, _env), do: type
 
   defp starts_with?(ast, string) do
     case ast do
@@ -47,10 +47,6 @@ defmodule ExUnion.Definition.Type.Field do
       _other ->
         false
     end
-  end
-
-  defp namespace_type({type, meta, _}, module) do
-    {{:., meta, [module, type]}, meta, []}
   end
 
   defp dealias_type({{:., meta1, [module, function]}, meta2, arguments}, env) do
@@ -80,6 +76,10 @@ defmodule ExUnion.Definition.Type.Field do
       |> Enum.map(&String.to_atom/1)
 
     {:__aliases__, meta, module_parts ++ nested}
+  end
+
+  defp namespace_type({type, meta, _}, module) do
+    {{:., meta, [module, type]}, meta, []}
   end
 
   @default_type {:any, [], Elixir}
