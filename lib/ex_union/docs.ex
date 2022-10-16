@@ -1,6 +1,7 @@
 defmodule ExUnion.Docs do
   @moduledoc false
 
+  @repo "https://github.com/sascha-wolf/ex_union/blob/main"
   def massage_readme(path, for: module) do
     path
     |> File.read!()
@@ -23,6 +24,8 @@ defmodule ExUnion.Docs do
       |> String.replace(~r/\(#([^\)]+)\)/, "(#module-\\1)")
       # Adjust the code links to work on hexdocs.pm
       |> String.replace(~r/\[(.+?)\]\[code:.+?\]/, "\\1")
+      # Adjust GitHub local links to work on hexdocs.pm
+      |> String.replace(~r|\(./(.*?)\)|, "(#{@repo}/\\1)")
       # Replace TODO-style boxes from list items
       |> String.replace("- [ ]", "- ◻")
       |> String.replace("- [x]", "- ✔")
