@@ -70,6 +70,7 @@ defmodule ExUnion.Definition.Type do
   end
 
   defp ast_for_matching_new_function(%__MODULE__{fields: fields}) do
+    field_types = Enum.map(fields, &{&1.name, &1.type})
     field_names = Enum.map(fields, & &1.name)
 
     ast_for_has_fields_guard =
@@ -80,10 +81,12 @@ defmodule ExUnion.Definition.Type do
       |> Enum.reduce(&{:or, [], [&1, &2]})
 
     quote do
+      @spec new(fields :: %{unquote_splicing(field_types)}) :: t()
       def new(fields) when is_map(fields) and unquote(ast_for_has_fields_guard) do
         struct!(__MODULE__, fields)
       end
 
+      @spec new(fields :: unquote(field_types)) :: t()
       def new([{field, _} | _] = fields) when field in unquote(field_names) do
         struct!(__MODULE__, fields)
       end
@@ -92,9 +95,11 @@ defmodule ExUnion.Definition.Type do
 
   defp ast_for_simple_new_function(%__MODULE__{fields: fields}) do
     arguments = Enum.map(fields, & &1.var)
+    arguments_with_types = Enum.map(fields, &{:"::", [], [&1.var, &1.type]})
     arguments_mapped_to_struct_fields = Enum.map(fields, &{&1.name, &1.var})
 
     quote do
+      @spec new(unquote_splicing(arguments_with_types)) :: t()
       def new(unquote_splicing(arguments)) do
         %__MODULE__{unquote_splicing(arguments_mapped_to_struct_fields)}
       end
