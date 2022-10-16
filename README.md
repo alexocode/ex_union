@@ -5,7 +5,8 @@
 [![Hex.pm](https://img.shields.io/hexpm/v/ex_union.svg)](https://hex.pm/packages/ex_union)
 [![Hex.pm Downloads](https://img.shields.io/hexpm/dt/ex_union)](https://hex.pm/packages/ex_union)
 
-**TODO: Add description**
+Tagged Unions for Elixir.
+Just that.
 
 ## Overview
 
