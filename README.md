@@ -203,7 +203,7 @@ end
 ```
 
 Out of a single line of `defunion some(value) | none` `ExUnion` generated over 30 lines of code.
-And while the specifics of the generated code are opinionated in places they do have a lot lower information density than the `defunion` line.
+And while the specifics of the generated code are opinionated in places, they do have a lot lower information density than the `defunion` line.
 
 ## Comparison
 
