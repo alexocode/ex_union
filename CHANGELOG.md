@@ -6,11 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-
+### Added
 ### Changed
+### Removed
+
+## [v0.1.0] - 2022-10-16
 
 ### Added
 
-### Removed
+- Implement the core `ExUnion.defunion` macro and generate a struct for each union case
+- Accept for type annotations of union case fields and use them to generate `@type` and `@spec` annotations
+- Generate shortcut functions for each union case
+- Generate a guard whose name is inferred from the top-level module
 
-[Unreleased]: https://github.com/sascha-wolf/ex_union/compare/744dd7dc078c5e9d2311f11a223f326665d9a38b...main
+[Unreleased]: https://github.com/sascha-wolf/ex_union/compare/v0.1.0...main
+[v0.1.0]: https://github.com/sascha-wolf/ex_union/compare/744dd7dc078c5e9d2311f11a223f326665d9a38b...v0.1.0
