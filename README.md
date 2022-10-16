@@ -167,14 +167,17 @@ defmodule Maybe do
     @type t :: %__MODULE__{value: any}
     defstruct [:value]
 
+    @spec new(fields :: %{value: any}) :: t
     def new(fields) when is_map(fields) and :erlang.is_map_key(:value, fields) do
       struct!(__MODULE__, fields)
     end
 
+    @spec new(fields :: [value: any]) :: t
     def new([{field, _} | _] = fields) when field in [:value] do
       struct!(__MODULE__, fields)
     end
 
+    @spec new(value :: any) :: t
     def new(value) do
       %__MODULE__{value: value}
     end
@@ -184,6 +187,7 @@ defmodule Maybe do
     @type t :: %__MODULE__{}
     defstruct []
 
+    @spec new() :: t
     def new() do
       %__MODULE__{}
     end
@@ -197,6 +201,9 @@ defmodule Maybe do
                   :erlang.map_get(:__struct__, value) in [Some, None]
 end
 ```
+
+Out of a single line of `defunion some(value) | none` `ExUnion` generated over 30 lines of code.
+And while the specifics of the generated code are opinionated in places they do have a lot lower information density than the `defunion` line.
 
 ## Comparison
 
