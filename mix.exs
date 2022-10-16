@@ -64,7 +64,7 @@ defmodule ExUnion.MixProject do
   #######
 
   def description do
-    "TODO"
+    "Tagged Unions for Elixir. Just that."
   end
 
   @extras Path.wildcard("pages/**/*.md")
