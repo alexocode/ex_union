@@ -23,6 +23,9 @@ defmodule ExUnion.Docs do
       |> String.replace(~r/\(#([^\)]+)\)/, "(#module-\\1)")
       # Adjust the code links to work on hexdocs.pm
       |> String.replace(~r/\[(.+?)\]\[code:.+?\]/, "\\1")
+      # Replace TODO-style boxes from list items
+      |> String.replace("- [ ]", "- ◻")
+      |> String.replace("- [x]", "- ✔")
     end)
   end
 end
