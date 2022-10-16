@@ -3,11 +3,10 @@ defmodule ExUnion.Definition.Type.Field do
 
   @type t :: %__MODULE__{
           name: atom,
-          default: :none | {:some, any},
           type: Macro.t(),
           var: {name :: atom, Macro.metadata(), __MODULE__}
         }
-  defstruct [:name, :default, :type, :var]
+  defstruct [:name, :type, :var]
 
   def build({:"::", _meta, [variable, type]}, %{env: env}) do
     type = massage_type(type, env)
