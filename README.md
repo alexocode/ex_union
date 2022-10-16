@@ -81,7 +81,7 @@ true
 As you can see `ExUnion` generates a number of things from the definition:
 
 - a struct for each case of the union (including type specs)
-- a shortcut function for each case to create said struct
+- a shortcut function for each case to create said struct (including `@spec`s)
 - a shortcut type spec for each case and the general union (`t`, `union`, `union_<case>`)
 - a guard that returns `true` if the given value is part of the union
 
