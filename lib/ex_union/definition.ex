@@ -64,9 +64,25 @@ defmodule ExUnion.Definition do
       end)
       |> Enum.reduce(&{:|, [], [&1, &2]})
 
-    quote do
-      @type t :: unquote(union)
-    end
+    ast_for_t =
+      quote do
+        @type t :: union()
+        @type union :: unquote(union)
+      end
+
+    ast_for_t_shortcuts =
+      Enum.map(types, fn %Type{name: name, module: module} ->
+        type = Macro.var(:"union_#{name}", nil)
+
+        quote do
+          @type unquote(type) :: unquote(module).t()
+        end
+      end)
+
+    Block.from([
+      ast_for_t,
+      ast_for_t_shortcuts
+    ])
   end
 
   defp ast_for_guard(%__MODULE__{name: name, types: types}) do

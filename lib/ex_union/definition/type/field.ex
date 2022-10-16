@@ -18,23 +18,39 @@ defmodule ExUnion.Definition.Type.Field do
   def build(variable, _opts), do: do_build(variable)
 
   defp massage_type(type, env) do
-    case type do
-      {:t, _, _} ->
-        prefix_t(type, env)
+    Macro.postwalk(type, &do_massage_type(&1, env))
+  end
 
-      {{:., _, _}, _, _} ->
+  defp do_massage_type({ast, _, _} = type, env) do
+    cond do
+      ast in [:t, :union] or starts_with?(ast, "union_") ->
+        namespace_type(type, env.module)
+
+      ast == :__aliases__ or match?({:., _, _}, ast) ->
         dealias_type(type, env)
 
-      {:__aliases__, _, _} ->
-        dealias_type(type, env)
-
-      other ->
-        other
+      # Fallback
+      true ->
+        type
     end
   end
 
-  defp prefix_t({:t, meta, _} = t, env) do
-    {{:., meta, [env.module, t]}, meta, []}
+  defp do_massage_type(type, _env), do: type
+
+  defp starts_with?(ast, string) do
+    case ast do
+      name when is_atom(name) ->
+        name
+        |> Atom.to_string()
+        |> String.starts_with?(string)
+
+      _other ->
+        false
+    end
+  end
+
+  defp namespace_type({type, meta, _}, module) do
+    {{:., meta, [module, type]}, meta, []}
   end
 
   defp dealias_type({{:., meta1, [module, function]}, meta2, arguments}, env) do

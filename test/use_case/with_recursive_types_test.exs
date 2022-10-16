@@ -16,9 +16,21 @@ defmodule UseCase.WithRecursiveTypesTest do
 
       defunion hex(string :: String.t())
                | rgb(red :: 0..255, green :: 0..255, blue :: 0..255)
-               | rgba(rgb :: __MODULE__.Rgb.t(), alpha :: float)
+               | rgba(rgb :: union_rgb, alpha :: float)
                | hsl(hue :: 0..360, saturation :: float, lightness :: float)
-               | hsla(hsl :: __MODULE__.Hsl.t(), alpha :: float)
+               | hsla(hsl :: union_hsl, alpha :: float)
+    end
+  end
+
+  test "properly compiles an union with a recursive type inside of datatypes" do
+    defmodule Union1 do
+      import ExUnion
+
+      defunion tuple(value :: {:ok, union})
+               | map(value :: %{any => union})
+               | function(value :: (union_keyword -> union_map))
+               | list(value :: [union])
+               | keyword(value :: [{atom, union}])
     end
   end
 end
