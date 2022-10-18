@@ -6,7 +6,7 @@ defmodule ExUnion.MixProject do
   def project do
     [
       app: :ex_union,
-      version: "0.1.0",
+      version: version(),
       elixir: "~> 1.10",
       preferred_cli_env: [
         coveralls: :test,
