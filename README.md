@@ -20,7 +20,7 @@ Just that.
   - [Example: If you'd write all this by hand](#example-if-youd-write-all-this-by-hand)
 - [Comparison](#comparison)
   - [`Algae`](#algae)
-  - [`Ok`](#ok-or-wormholeelixirwormhole)
+  - [`Ok` or `Wormhole`](#ok-or-wormhole)
 - [Roadmap](#roadmap)
 - [Contributing](#contributing)
 
