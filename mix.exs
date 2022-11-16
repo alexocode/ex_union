@@ -8,6 +8,7 @@ defmodule ExUnion.MixProject do
       app: :ex_union,
       version: version(),
       elixir: "~> 1.10",
+      elixirc_paths: elixirc_paths(Mix.env()),
       preferred_cli_env: [
         coveralls: :test,
         "coveralls.detail": :test,
@@ -18,6 +19,7 @@ defmodule ExUnion.MixProject do
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
+      dialyzer: dialyzer(),
 
       # Docs
       name: "ExUnion",
@@ -32,6 +34,9 @@ defmodule ExUnion.MixProject do
     ]
   end
 
+  defp elixirc_paths(:dev), do: ["examples", "lib"]
+  defp elixirc_paths(_), do: ["lib"]
+
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
@@ -43,7 +48,7 @@ defmodule ExUnion.MixProject do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
-      "check.all": ["format --check-formatted", "credo"]
+      "check.all": ["format --check-formatted", "credo", "dialyzer"]
     ]
   end
 
@@ -52,10 +57,18 @@ defmodule ExUnion.MixProject do
     [
       # No Runtime
       {:credo, ">= 1.0.0", only: :dev, runtime: false},
+      {:dialyxir, "~> 1.0", only: :dev, runtime: false},
       {:ex_doc, "~> 0.23", only: :dev, runtime: false},
 
       # Test
       {:excoveralls, "~> 0.13", only: :test}
+    ]
+  end
+
+  defp dialyzer do
+    [
+      # ignore_warnings: "dialyzer/ignore.exs",
+      plt_file: {:no_warn, ".dialyzer/dialyzer.plt"}
     ]
   end
 

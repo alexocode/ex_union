@@ -98,7 +98,21 @@ defmodule ExUnion.Definition.Type do
     arguments_with_types = Enum.map(fields, &{:"::", [], [&1.var, &1.type]})
     arguments_mapped_to_struct_fields = Enum.map(fields, &{&1.name, &1.var})
 
+    # When we only have a single field we can easily generate an "overloaded contract"
+    # where the "simple new/1" spec is a superset of the "matching new/1".
+    # While this isn't an issue it does produce an "Overloaded contract" warning from
+    # dialyzer, since dialyzer doesn't support this, but since nothing breaks we still
+    # generate the @spec and silence this specific dialyzer warning to retain the type
+    # information
+    maybe_ignore_dialyzer_warning =
+      if length(fields) == 1 do
+        quote do
+          @dialyzer {:no_contracts, new: 1}
+        end
+      end
+
     quote do
+      unquote(maybe_ignore_dialyzer_warning)
       @spec new(unquote_splicing(arguments_with_types)) :: t()
       def new(unquote_splicing(arguments)) do
         %__MODULE__{unquote_splicing(arguments_mapped_to_struct_fields)}
@@ -106,11 +120,16 @@ defmodule ExUnion.Definition.Type do
     end
   end
 
-  def to_shortcut_function(%__MODULE__{} = type) do
-    arguments = Enum.map(type.fields, & &1.var)
+  def to_shortcut_function(%__MODULE__{fields: fields} = type) do
+    arguments = Enum.map(fields, & &1.var)
+    arguments_with_types = Enum.map(fields, &{:"::", [], [&1.var, &1.type]})
+    field_types = Enum.map(fields, &{&1.name, &1.type})
 
     arity_1_shortcut =
       quote do
+        @spec unquote(type.name)(fields :: %{unquote_splicing(field_types)}) ::
+                unquote(type.module).t()
+        @spec unquote(type.name)(fields :: unquote(field_types)) :: unquote(type.module).t()
         defdelegate unquote(type.name)(fields),
           to: unquote(type.module),
           as: :new
@@ -118,6 +137,8 @@ defmodule ExUnion.Definition.Type do
 
     arity_n_shortcut =
       quote do
+        @spec unquote(type.name)(unquote_splicing(arguments_with_types)) ::
+                unquote(type.module).t()
         defdelegate unquote(type.name)(unquote_splicing(arguments)),
           to: unquote(type.module),
           as: :new

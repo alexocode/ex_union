@@ -24,3 +24,6 @@ ex_union-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
+
+# Dialyzer cache (contains the PLTs - persistent lookup tables)
+/.dialyzer/
