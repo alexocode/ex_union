@@ -120,11 +120,16 @@ defmodule ExUnion.Definition.Type do
     end
   end
 
-  def to_shortcut_function(%__MODULE__{} = type) do
-    arguments = Enum.map(type.fields, & &1.var)
+  def to_shortcut_function(%__MODULE__{fields: fields} = type) do
+    arguments = Enum.map(fields, & &1.var)
+    arguments_with_types = Enum.map(fields, &{:"::", [], [&1.var, &1.type]})
+    field_types = Enum.map(fields, &{&1.name, &1.type})
 
     arity_1_shortcut =
       quote do
+        @spec unquote(type.name)(fields :: %{unquote_splicing(field_types)}) ::
+                unquote(type.module).t()
+        @spec unquote(type.name)(fields :: unquote(field_types)) :: unquote(type.module).t()
         defdelegate unquote(type.name)(fields),
           to: unquote(type.module),
           as: :new
@@ -132,6 +137,8 @@ defmodule ExUnion.Definition.Type do
 
     arity_n_shortcut =
       quote do
+        @spec unquote(type.name)(unquote_splicing(arguments_with_types)) ::
+                unquote(type.module).t()
         defdelegate unquote(type.name)(unquote_splicing(arguments)),
           to: unquote(type.module),
           as: :new
