@@ -20,7 +20,7 @@ jobs:
       VERSION_ELIXIR: 1.14.0
       VERSION_OTP: 24.3.4.5
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Write the release version to the version file
         run: |

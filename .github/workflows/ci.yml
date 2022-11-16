@@ -46,7 +46,7 @@ jobs:
             elixir: 1.14.0
             otp: 24.3.4.5
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Cache - deps/
         uses: actions/cache@v1
@@ -85,7 +85,7 @@ jobs:
         run: apk add --no-cache git
 
       # mix coveralls.github uses git to fetch the pr head so we ensure the whole history is available
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
@@ -124,7 +124,7 @@ jobs:
       VERSION_ELIXIR: 1.14.0
       VERSION_OTP: 24.3.4.5
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Cache - deps/
         uses: actions/cache@v1
@@ -159,7 +159,7 @@ jobs:
       VERSION_ELIXIR: 1.14.0
       VERSION_OTP: 24.3.4.5
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Cache - deps/
         uses: actions/cache@v1
@@ -194,7 +194,7 @@ jobs:
       VERSION_ELIXIR: 1.14.0
       VERSION_OTP: 24.3.4.5
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Cache - deps/
         uses: actions/cache@v1
