@@ -8,6 +8,7 @@ defmodule ExUnion.MixProject do
       app: :ex_union,
       version: version(),
       elixir: "~> 1.10",
+      elixirc_paths: elixirc_paths(Mix.env()),
       preferred_cli_env: [
         coveralls: :test,
         "coveralls.detail": :test,
@@ -19,6 +20,7 @@ defmodule ExUnion.MixProject do
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
+      dialyzer: dialyzer(),
 
       # Docs
       name: "ExUnion",
@@ -32,6 +34,9 @@ defmodule ExUnion.MixProject do
       version: version()
     ]
   end
+
+  defp elixirc_paths(:dialyzer), do: ["examples", "lib"]
+  defp elixirc_paths(_), do: ["lib"]
 
   # Run "mix help compile.app" to learn about applications.
   def application do
@@ -58,6 +63,13 @@ defmodule ExUnion.MixProject do
 
       # Test
       {:excoveralls, "~> 0.13", only: :test}
+    ]
+  end
+
+  defp dialyzer do
+    [
+      # ignore_warnings: "dialyzer/ignore.exs",
+      plt_file: {:no_warn, ".cache/dialyzer.plt"}
     ]
   end
 
