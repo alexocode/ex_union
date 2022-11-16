@@ -12,7 +12,8 @@ defmodule ExUnion.MixProject do
         coveralls: :test,
         "coveralls.detail": :test,
         "coveralls.post": :test,
-        "coveralls.html": :test
+        "coveralls.html": :test,
+        dialyzer: :dialyzer
       ],
       test_coverage: [tool: ExCoveralls],
       start_permanent: Mix.env() == :prod,
@@ -52,6 +53,7 @@ defmodule ExUnion.MixProject do
     [
       # No Runtime
       {:credo, ">= 1.0.0", only: :dev, runtime: false},
+      {:dialyxir, "~> 1.0", only: :dialyzer, runtime: false},
       {:ex_doc, "~> 0.23", only: :dev, runtime: false},
 
       # Test
