@@ -148,3 +148,45 @@ jobs:
 
       - run: mix compile --warnings-as-errors
       - run: mix check.all
+
+  check_types:
+    name: Check Types (including generated)
+    runs-on: ubuntu-latest
+    container: hexpm/elixir:1.14.0-erlang-24.3.4.5-alpine-3.16.2
+    env:
+      MIX_ENV: dialyzer
+      VERSION_ALPINE: 3.16.2
+      VERSION_ELIXIR: 1.14.0
+      VERSION_OTP: 24.3.4.5
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Cache - deps/
+        uses: actions/cache@v1
+        with:
+          path: deps/
+          key: ${{ env.CACHE_PREFIX_DEPS }}-env:${{ env.MIX_ENV }}-alpine:${{ env.VERSION_ALPINE }}-elixir:${{ env.VERSION_ELIXIR }}-otp:${{ env.VERSION_OTP }}-${{ hashFiles('**/mix.lock') }}
+          restore-keys: ${{ env.CACHE_PREFIX_DEPS }}-env:${{ env.MIX_ENV }}-alpine:${{ env.VERSION_ALPINE }}-elixir:${{ env.VERSION_ELIXIR }}-otp:${{ env.VERSION_OTP }}-
+
+      - name: Install Dependencies
+        run: |
+          mix local.rebar --force
+          mix local.hex --force
+          mix deps.get --only "$MIX_ENV"
+
+      - name: Cache - _build/
+        uses: actions/cache@v1
+        with:
+          path: _build/
+          key: ${{ env.CACHE_PREFIX_BUILD }}-env:${{ env.MIX_ENV }}-alpine:${{ env.VERSION_ALPINE }}-elixir:${{ env.VERSION_ELIXIR }}-otp:${{ env.VERSION_OTP }}-${{ hashFiles('**/mix.lock') }}
+          restore-keys: ${{ env.CACHE_PREFIX_BUILD }}-env:${{ env.MIX_ENV }}-alpine:${{ env.VERSION_ALPINE }}-elixir:${{ env.VERSION_ELIXIR }}-otp:${{ env.VERSION_OTP }}-
+
+      - run: mix compile --warnings-as-errors
+
+      - name: Cache - Dialyzer PLTs
+        uses: actions/cache@v1
+        with:
+          path: .dialyzer/
+          key: ${{ env.CACHE_PREFIX_DIALYZER }}-env:${{ env.MIX_ENV }}-alpine:${{ env.VERSION_ALPINE }}-elixir:${{ env.VERSION_ELIXIR }}-otp:${{ env.VERSION_OTP }}
+
+      - run: mix dialyzer
