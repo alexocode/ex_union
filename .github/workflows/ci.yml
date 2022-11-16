@@ -8,6 +8,7 @@ on:
 
 env:
   CACHE_PREFIX_DEPS: v1-deps
+  CACHE_PREFIX_DIALYZER: v1-dialyzer
   CACHE_PREFIX_BUILD: v1-_build
 
 jobs:
@@ -46,10 +47,13 @@ jobs:
             elixir: 1.14.0
             otp: 24.3.4.5
     steps:
-      - uses: actions/checkout@v2
+      - name: Install tar (neeeds to be POSIX compliant for caching)
+        run: apk --no-cache add tar
+
+      - uses: actions/checkout@v3
 
       - name: Cache - deps/
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: deps/
           key: ${{ env.CACHE_PREFIX_DEPS }}-env:${{ env.MIX_ENV }}-alpine:${{ env.VERSION_ALPINE }}-elixir:${{ env.VERSION_ELIXIR }}-otp:${{ env.VERSION_OTP }}-${{ hashFiles('**/mix.lock') }}
@@ -62,7 +66,7 @@ jobs:
           mix deps.get --only "$MIX_ENV"
 
       - name: Cache - _build/
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: _build/
           key: ${{ env.CACHE_PREFIX_BUILD }}-env:${{ env.MIX_ENV }}-alpine:${{ env.VERSION_ALPINE }}-elixir:${{ env.VERSION_ELIXIR }}-otp:${{ env.VERSION_OTP }}-${{ hashFiles('**/mix.lock') }}
@@ -81,16 +85,16 @@ jobs:
       VERSION_ELIXIR: 1.14.0
       VERSION_OTP: 24.3.4.5
     steps:
-      - name: Install git (required for mix coveralls.github)
-        run: apk add --no-cache git
+      - name: Install git (required for mix coveralls.github) and tar (needs to be POSIX compliant for caching)
+        run: apk add --no-cache git tar
 
       # mix coveralls.github uses git to fetch the pr head so we ensure the whole history is available
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
       - name: Cache - deps/
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: deps/
           key: ${{ env.CACHE_PREFIX_DEPS }}-env:${{ env.MIX_ENV }}-alpine:${{ env.VERSION_ALPINE }}-elixir:${{ env.VERSION_ELIXIR }}-otp:${{ env.VERSION_OTP}}-${{ hashFiles('**/mix.lock') }}
@@ -103,7 +107,7 @@ jobs:
           mix deps.get --only "$MIX_ENV"
 
       - name: Cache - _build/
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: _build/
           key: ${{ env.CACHE_PREFIX_BUILD }}-env:${{ env.MIX_ENV }}-alpine:${{ env.VERSION_ALPINE }}-elixir:${{ env.VERSION_ELIXIR }}-otp:${{ env.VERSION_OTP }}-${{ hashFiles('**/mix.lock') }}
@@ -124,10 +128,13 @@ jobs:
       VERSION_ELIXIR: 1.14.0
       VERSION_OTP: 24.3.4.5
     steps:
-      - uses: actions/checkout@v2
+      - name: Install tar (neeeds to be POSIX compliant for caching)
+        run: apk --no-cache add tar
+
+      - uses: actions/checkout@v3
 
       - name: Cache - deps/
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: deps/
           key: ${{ env.CACHE_PREFIX_DEPS }}-env:${{ env.MIX_ENV }}-alpine:${{ env.VERSION_ALPINE }}-elixir:${{ env.VERSION_ELIXIR }}-otp:${{ env.VERSION_OTP }}-${{ hashFiles('**/mix.lock') }}
@@ -140,7 +147,7 @@ jobs:
           mix deps.get --only "$MIX_ENV"
 
       - name: Cache - _build/
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: _build/
           key: ${{ env.CACHE_PREFIX_BUILD }}-env:${{ env.MIX_ENV }}-alpine:${{ env.VERSION_ALPINE }}-elixir:${{ env.VERSION_ELIXIR }}-otp:${{ env.VERSION_OTP }}-${{ hashFiles('**/mix.lock') }}
@@ -159,10 +166,13 @@ jobs:
       VERSION_ELIXIR: 1.14.0
       VERSION_OTP: 24.3.4.5
     steps:
-      - uses: actions/checkout@v2
+      - name: Install tar (neeeds to be POSIX compliant for caching)
+        run: apk --no-cache add tar
+
+      - uses: actions/checkout@v3
 
       - name: Cache - deps/
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: deps/
           key: ${{ env.CACHE_PREFIX_DEPS }}-env:${{ env.MIX_ENV }}-alpine:${{ env.VERSION_ALPINE }}-elixir:${{ env.VERSION_ELIXIR }}-otp:${{ env.VERSION_OTP }}-${{ hashFiles('**/mix.lock') }}
@@ -175,7 +185,7 @@ jobs:
           mix deps.get --only "$MIX_ENV"
 
       - name: Cache - _build/
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: _build/
           key: ${{ env.CACHE_PREFIX_BUILD }}-env:${{ env.MIX_ENV }}-alpine:${{ env.VERSION_ALPINE }}-elixir:${{ env.VERSION_ELIXIR }}-otp:${{ env.VERSION_OTP }}-${{ hashFiles('**/mix.lock') }}
@@ -194,10 +204,13 @@ jobs:
       VERSION_ELIXIR: 1.14.0
       VERSION_OTP: 24.3.4.5
     steps:
-      - uses: actions/checkout@v2
+      - name: Install tar (neeeds to be POSIX compliant for caching)
+        run: apk --no-cache add tar
+
+      - uses: actions/checkout@v3
 
       - name: Cache - deps/
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: deps/
           key: ${{ env.CACHE_PREFIX_DEPS }}-env:${{ env.MIX_ENV }}-alpine:${{ env.VERSION_ALPINE }}-elixir:${{ env.VERSION_ELIXIR }}-otp:${{ env.VERSION_OTP }}-${{ hashFiles('**/mix.lock') }}
@@ -210,7 +223,7 @@ jobs:
           mix deps.get --only "$MIX_ENV"
 
       - name: Cache - _build/
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: _build/
           key: ${{ env.CACHE_PREFIX_BUILD }}-env:${{ env.MIX_ENV }}-alpine:${{ env.VERSION_ALPINE }}-elixir:${{ env.VERSION_ELIXIR }}-otp:${{ env.VERSION_OTP }}-${{ hashFiles('**/mix.lock') }}
@@ -219,7 +232,7 @@ jobs:
       - run: mix compile
 
       - name: Cache - Dialyzer PLTs
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: .dialyzer/
           key: ${{ env.CACHE_PREFIX_DIALYZER }}-env:${{ env.MIX_ENV }}-alpine:${{ env.VERSION_ALPINE }}-elixir:${{ env.VERSION_ELIXIR }}-otp:${{ env.VERSION_OTP }}
