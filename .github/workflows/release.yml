@@ -28,7 +28,7 @@ jobs:
           echo -n "${GITHUB_REF#refs/tags/v}" > version
 
       - name: Cache - deps/
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: deps/
           key: ${{ env.CACHE_PREFIX_DEPS }}-env:${{ env.MIX_ENV }}-alpine:${{ env.VERSION_ALPINE }}-elixir:${{ env.VERSION_ELIXIR }}-otp:${{ env.VERSION_OTP }}-${{ hashFiles('**/mix.lock') }}
@@ -41,7 +41,7 @@ jobs:
           mix deps.get --only "$MIX_ENV"
 
       - name: Cache - _build/
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: _build/
           key: ${{ env.CACHE_PREFIX_BUILD }}-env:${{ env.MIX_ENV }}-alpine:${{ env.VERSION_ALPINE }}-elixir:${{ env.VERSION_ELIXIR }}-otp:${{ env.VERSION_OTP }}-${{ hashFiles('**/mix.lock') }}
