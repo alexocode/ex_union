@@ -20,6 +20,9 @@ jobs:
       VERSION_ELIXIR: 1.14.0
       VERSION_OTP: 24.3.4.5
     steps:
+      - name: Install tar (neeeds to be POSIX compliant for caching)
+        run: apk --no-cache add tar
+
       - uses: actions/checkout@v3
 
       - name: Write the release version to the version file
