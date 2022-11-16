@@ -8,6 +8,7 @@ on:
 
 env:
   CACHE_PREFIX_DEPS: v1-deps
+  CACHE_PREFIX_DIALYZER: v1-dialyzer
   CACHE_PREFIX_BUILD: v1-_build
 
 jobs:
