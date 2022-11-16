@@ -4,7 +4,7 @@ defmodule ExUnion.Definition do
   alias __MODULE__.{Block, Type}
 
   @type t :: %__MODULE__{
-          name: atom,
+          name: String.t(),
           module: module,
           types: list(Type.t())
         }
