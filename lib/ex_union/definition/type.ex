@@ -98,7 +98,21 @@ defmodule ExUnion.Definition.Type do
     arguments_with_types = Enum.map(fields, &{:"::", [], [&1.var, &1.type]})
     arguments_mapped_to_struct_fields = Enum.map(fields, &{&1.name, &1.var})
 
+    # When we only have a single field we can easily generate an "overloaded contract"
+    # where the "simple new/1" spec is a superset of the "matching new/1".
+    # While this isn't an issue it does produce an "Overloaded contract" warning from
+    # dialyzer, since dialyzer doesn't support this, but since nothing breaks we still
+    # generate the @spec and silence this specific dialyzer warning to retain the type
+    # information
+    maybe_ignore_dialyzer_warning =
+      if length(fields) == 1 do
+        quote do
+          @dialyzer {:no_contracts, new: 1}
+        end
+      end
+
     quote do
+      unquote(maybe_ignore_dialyzer_warning)
       @spec new(unquote_splicing(arguments_with_types)) :: t()
       def new(unquote_splicing(arguments)) do
         %__MODULE__{unquote_splicing(arguments_mapped_to_struct_fields)}
