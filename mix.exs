@@ -13,8 +13,7 @@ defmodule ExUnion.MixProject do
         coveralls: :test,
         "coveralls.detail": :test,
         "coveralls.post": :test,
-        "coveralls.html": :test,
-        dialyzer: :dialyzer
+        "coveralls.html": :test
       ],
       test_coverage: [tool: ExCoveralls],
       start_permanent: Mix.env() == :prod,
@@ -35,7 +34,7 @@ defmodule ExUnion.MixProject do
     ]
   end
 
-  defp elixirc_paths(:dialyzer), do: ["examples", "lib"]
+  defp elixirc_paths(:dev), do: ["examples", "lib"]
   defp elixirc_paths(_), do: ["lib"]
 
   # Run "mix help compile.app" to learn about applications.
@@ -49,7 +48,7 @@ defmodule ExUnion.MixProject do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
-      "check.all": ["format --check-formatted", "credo"]
+      "check.all": ["format --check-formatted", "credo", "dialyzer"]
     ]
   end
 
@@ -58,7 +57,7 @@ defmodule ExUnion.MixProject do
     [
       # No Runtime
       {:credo, ">= 1.0.0", only: :dev, runtime: false},
-      {:dialyxir, "~> 1.0", only: :dialyzer, runtime: false},
+      {:dialyxir, "~> 1.0", only: :dev, runtime: false},
       {:ex_doc, "~> 0.23", only: :dev, runtime: false},
 
       # Test

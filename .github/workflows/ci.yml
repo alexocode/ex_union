@@ -154,7 +154,7 @@ jobs:
     runs-on: ubuntu-latest
     container: hexpm/elixir:1.14.0-erlang-24.3.4.5-alpine-3.16.2
     env:
-      MIX_ENV: dialyzer
+      MIX_ENV: dev
       VERSION_ALPINE: 3.16.2
       VERSION_ELIXIR: 1.14.0
       VERSION_OTP: 24.3.4.5
