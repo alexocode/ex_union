@@ -69,7 +69,7 @@ defmodule ExUnion.MixProject do
   defp dialyzer do
     [
       # ignore_warnings: "dialyzer/ignore.exs",
-      plt_file: {:no_warn, ".cache/dialyzer.plt"}
+      plt_file: {:no_warn, ".dialyzer/dialyzer.plt"}
     ]
   end
 
