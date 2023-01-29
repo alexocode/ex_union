@@ -93,7 +93,7 @@ defmodule ExUnion.MixProject do
 
   def package do
     [
-      files: ["lib", "mix.exs", "CHANGELOG*", "LICENSE*", "README*", "version"],
+      files: ["lib", "mix.exs", ".formatter.exs", "CHANGELOG*", "LICENSE*", "README*", "version"],
       licenses: ["MIT"],
       links: %{
         "GitHub" => @github
