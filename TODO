@@ -1,0 +1,9 @@
+API:
+  ☐ Define and implement a `@behaviour` for each union-case (necessary for external module definitions)
+
+Quality of Life:
+  ☐ Figure out a way to derive protocol implementations for union structs (e.g. for `Jason`)
+
+Explore: @idea
+  ☐ Allow to pass "external" module to define a single case
+  ☐ Single case definitions (to be able to use it as value-type)
