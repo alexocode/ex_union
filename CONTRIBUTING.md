@@ -1,7 +1,7 @@
 # Contributing
 
 If you discover issues, have ideas for improvements or new features,
-please [open an issue](https://github.com/sascha-wolf/ex_union/issues)
+please [open an issue](https://github.com/alexocode/ex_union/issues)
 or submit a pull request.
 
 Make sure to follow the following guidelines when doing so.
@@ -33,13 +33,13 @@ Make sure to follow the following guidelines when doing so.
 Here are a few examples:
 
 ```
-- [#19](https://github.com/sascha-wolf/ex_union/pull/42): Fix the annoying thing ([@AmazingGitHubUser])
-- [#16](https://github.com/sascha-wolf/ex_union/pull/1337): Add caching to GitHub Actions ([@sascha-wolf])
+- [#19](https://github.com/alexocode/ex_union/pull/42): Fix the annoying thing ([@AmazingGitHubUser])
+- [#16](https://github.com/alexocode/ex_union/pull/1337): Add caching to GitHub Actions ([@alexocode])
 ```
 
 * Mark it up in [Markdown syntax](https://daringfireball.net/projects/markdown/syntax).
 * The entry line should start with `- ` (a dash and a space).
-* Begin with a link to your pull request (`[#456](https://github.com/sascha-wolf/ex_union/pull/456): `)
+* Begin with a link to your pull request (`[#456](https://github.com/alexocode/ex_union/pull/456): `)
 * Describe the core idea of the change.
 * If this is a breaking change, mark it with `**(Breaking)**`.
 * At the end of the entry, add an implicit link to your GitHub user page as `([@username])`.

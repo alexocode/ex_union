@@ -1,7 +1,7 @@
 defmodule ExUnion.Docs do
   @moduledoc false
 
-  @repo "https://github.com/sascha-wolf/ex_union/blob/main"
+  @repo "https://github.com/alexocode/ex_union/blob/main"
   def massage_readme(path, for: module) do
     path
     |> File.read!()

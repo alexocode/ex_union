@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [v0.1.1] - 2022-11-16
 ### Changed
-- [#2](https://github.com/sascha-wolf/ex_union/pull/2): Resolve dialyzer warnings ([@sascha-wolf])
+- [#2](https://github.com/alexocode/ex_union/pull/2): Resolve dialyzer warnings ([@alexocode])
 
 ## [v0.1.0] - 2022-10-16
 
@@ -27,9 +27,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Generate shortcut functions for each union case
 - Generate a guard whose name is inferred from the top-level module
 
-[Unreleased]: https://github.com/sascha-wolf/ex_union/compare/v0.1.2...main
-[v0.1.2]: https://github.com/sascha-wolf/ex_union/compare/v0.1.1...v0.1.2
-[v0.1.1]: https://github.com/sascha-wolf/ex_union/compare/v0.1.0...v0.1.1
-[v0.1.0]: https://github.com/sascha-wolf/ex_union/compare/744dd7dc078c5e9d2311f11a223f326665d9a38b...v0.1.0
+[Unreleased]: https://github.com/alexocode/ex_union/compare/v0.1.2...main
+[v0.1.2]: https://github.com/alexocode/ex_union/compare/v0.1.1...v0.1.2
+[v0.1.1]: https://github.com/alexocode/ex_union/compare/v0.1.0...v0.1.1
+[v0.1.0]: https://github.com/alexocode/ex_union/compare/744dd7dc078c5e9d2311f11a223f326665d9a38b...v0.1.0
 
-[@sascha-wolf]: https://github.com/sascha-wolf
+[@alexocode]: https://github.com/alexocode

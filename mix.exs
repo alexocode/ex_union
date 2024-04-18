@@ -1,7 +1,7 @@
 defmodule ExUnion.MixProject do
   use Mix.Project
 
-  @github "https://github.com/sascha-wolf/ex_union"
+  @github "https://github.com/alexocode/ex_union"
 
   def project do
     [
@@ -98,7 +98,7 @@ defmodule ExUnion.MixProject do
       links: %{
         "GitHub" => @github
       },
-      maintainers: ["Sascha Wolf <swolf.dev@gmail.com>"]
+      maintainers: ["Alex Wolf <craft@alexocode.dev>"]
     ]
   end
 
